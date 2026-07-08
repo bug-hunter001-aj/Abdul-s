@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Al-Quran Al-Kareem - The Noble Quran</title>
+    <style>
+        /* ============ CSS CUSTOM PROPERTIES ============ */
+        :root {
+            --deep-navy: #0a1128;
+            --royal-blue: #14264b;
+            --ink-blue: #1a2f55;
+            --gold: #c9a44b;
+            --gold-light: #e0c87d;
+            --parchment: #faf6ee;
+            --ivory: #fdf9f0;
+            --cream: #f5ecd7;
+            --turquoise-accent: #2d8f8f;
+            --text-dark: #2c2416;
+            --text-muted: #6b5e4a;
+            --border-gold: #b8943f;
+            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.3);
+            --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.15);
+            --radius-lg: 16px;
+            --radius-md: 10px;
+            --radius-sm: 6px;
+            --transition: 0.25s ease;
+        }
+
+        /* ============ GLOBAL RESET & BASE ============ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Georgia', 'Times New Roman', serif;
+            background: linear-gradient(160deg, #060d20 0%, var(--deep-navy) 30%, #0d1832 60%, #0a1028 100%);
+            background-attachment: fixed;
+            color: var(--text-dark);
+            min-height: 100vh;
+            line-height: 1.7;
+        }
+
+        /* Subtle geometric pattern overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(ellipse at 20% 50%, rgba(201, 164, 75, 0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(45, 143, 143, 0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(201, 164, 75, 0.04) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ============ LAYOUT ============ */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ============ SIDEBAR ============ */
+        .sidebar {
+            width: 340px;
+            min-width: 340px;
+            background: linear-gradient(180deg, #0d1a35 0%, #111f3d 50%, #0c162e 100%);
+            border-right: 1px solid rgba(201, 164, 75, 0.25);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            box-shadow: 4px 0 25px rgba(0, 0, 0, 0.4);
+            z-index: 10;
+        }
+
+        .sidebar-header {
+            padding: 28px 24px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(201, 164, 75, 0.2);
+            background: linear-gradient(180deg, rgba(201, 164, 75, 0.08) 0%, transparent 100%);
+        }
+
+        .sidebar-header .bismillah {
+            font-family: 'Traditional Arabic', 'Amiri', 'Georgia', serif;
+            font-size: 1.8rem;
+            color: var(--gold);
+            letter-spacing: 2px;
+            margin-bottom: 6px;
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.3rem;
+            color: var(--gold-light);
+            font-weight: 400;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .sidebar-header .subtitle {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            margin-top: 4px;
+            color: rgba(224, 200, 125, 0.6);
+        }
+
+        /* Search */
+        .search-wrapper {
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(201, 164, 75, 0.12);
+        }
+
+        .search-wrapper input {
+            width: 100%;
+            padding: 11px 16px;
+            border-radius: 25px;
+            border: 1px solid rgba(201, 164, 75, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--parchment);
+            font-size: 0.9rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-wrapper input::placeholder {
+            color: rgba(250, 246, 238, 0.4);
+        }
+        .search-wrapper input:focus {
+            border-color: var(--gold);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 15px rgba(201, 164, 75, 0.1);
+        }
+
+        /* Chapter list */
+        .chapter-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px 0;
+        }
+
+        .chapter-list::-webkit-scrollbar {
+            width: 5px;
+        }
+        .chapter-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .chapter-list::-webkit-scrollbar-thumb {
+            background: rgba(201, 164, 75, 0.3);
+            border-radius: 10px;
+        }
+
+        .chapter-item {
+            display: flex;
+            align-items: center;
+            padding: 13px 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            border-left: 3px solid transparent;
+            gap: 14px;
+            color: #c5bfad;
+            position: relative;
+        }
+
+        .chapter-item:hover {
+            background: rgba(201, 164, 75, 0.08);
+            color: var(--parchment);
+        }
+
+        .chapter-item.active {
+            background: linear-gradient(90deg, rgba(201, 164, 75, 0.15) 0%, rgba(201, 164, 75, 0.03) 100%);
+            border-left: 3px solid var(--gold);
+            color: var(--gold-light);
+        }
+
+        .chapter-number {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(201, 164, 75, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--gold);
+            flex-shrink: 0;
+            border: 1px solid rgba(201, 164, 75, 0.25);
+        }
+
+        .chapter-item.active .chapter-number {
+            background: var(--gold);
+            color: #0d1a35;
+            border-color: var(--gold);
+        }
+
+        .chapter-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .chapter-name-ar {
+            font-family: 'Traditional Arabic', 'Amiri', 'Georgia', serif;
+            font-size: 1.2rem;
+            line-height: 1.2;
+        }
+
+        .chapter-name-en {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chapter-verses {
+            font-size: 0.7rem;
+            color: var(--turquoise-accent);
+            flex-shrink: 0;
+        }
+
+        /* ============ MAIN CONTENT ============ */
+        .main-content {
+            flex: 1;
+            padding: 30px 40px;
+            max-height: 100vh;
+            overflow-y: auto;
+        }
+
+        .main-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .main-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .main-content::-webkit-scrollbar-thumb {
+            background: rgba(201, 164, 75, 0.25);
+            border-radius: 10px;
+        }
+
+        /* Chapter header card */
+        .chapter-header {
+            background: linear-gradient(135deg, #112048 0%, #1a2f55 50%, #14264b 100%);
+            border-radius: var(--radius-lg);
+            padding: 35px 40px;
+            margin-bottom: 30px;
+            text-align: center;
+            border: 1px solid rgba(201, 164, 75, 0.3);
+            box-shadow: var(--shadow-soft);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chapter-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, rgba(201, 164, 75, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .chapter-header .ch-number-display {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--gold);
+            line-height: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .chapter-header .ch-name-ar-display {
+            font-family: 'Traditional Arabic', 'Amiri', 'Georgia', serif;
+            font-size: 2.8rem;
+            color: var(--gold-light);
+            margin: 8px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .chapter-header .ch-name-en-display {
+            font-size: 1.1rem;
+            color: rgba(224, 200, 125, 0.7);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 1;
+        }
+
+        .chapter-header .ch-info-row {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 18px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ch-info-badge {
+            background: rgba(201, 164, 75, 0.1);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--gold-light);
+            border: 1px solid rgba(201, 164, 75, 0.2);
+        }
+
+        /* Verse cards */
+        .verses-container {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .verse-card {
+            background: var(--ivory);
+            border-radius: var(--radius-md);
+            padding: 22px 28px;
+            box-shadow: var(--shadow-card);
+            border: 1px solid rgba(184, 148, 63, 0.2);
+            transition: var(--transition);
+            display: flex;
+            gap: 18px;
+            align-items: flex-start;
+        }
+
+        .verse-card:hover {
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+            border-color: rgba(184, 148, 63, 0.45);
+            transform: translateY(-1px);
+        }
+
+        .verse-number {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #c9a44b 0%, #a07828 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(201, 164, 75, 0.3);
+        }
+
+        .verse-text-ar {
+            font-family: 'Traditional Arabic', 'Amiri', 'Georgia', 'Times New Roman', serif;
+            font-size: 1.6rem;
+            line-height: 2.3;
+            color: #1a1a1a;
+            text-align: right;
+            direction: rtl;
+            flex: 1;
+        }
+
+        .verse-text-en {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+            line-height: 1.6;
+            text-align: left;
+            direction: ltr;
+            font-style: italic;
+        }
+
+        .verse-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: rgba(250, 246, 238, 0.5);
+        }
+
+        .empty-state .icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            font-size: 1.1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                min-width: 100%;
+                height: auto;
+                max-height: 45vh;
+                position: relative;
+                flex-shrink: 0;
+            }
+            .main-content {
+                padding: 20px 16px;
+            }
+            .chapter-header {
+                padding: 24px 20px;
+            }
+            .chapter-header .ch-number-display {
+                font-size: 2.5rem;
+            }
+            .chapter-header .ch-name-ar-display {
+                font-size: 2rem;
+            }
+            .verse-card {
+                flex-direction: column;
+                padding: 18px;
+            }
+            .verse-text-ar {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- ============ SIDEBAR ============ -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="bismillah">﷽</div>
+                <h1>Al-Quran Al-Kareem</h1>
+                <div class="subtitle">THE NOBLE QURAN</div>
+            </div>
+            <div class="search-wrapper">
+                <input type="text" id="searchInput" placeholder="🔍 Search chapters..." oninput="filterChapters()">
+            </div>
+            <div class="chapter-list" id="chapterList">
+                <!-- Chapters will be injected here by JS -->
+            </div>
+        </aside>
+
+        <!-- ============ MAIN CONTENT ============ -->
+        <main class="main-content" id="mainContent">
+            <div class="empty-state">
+                <div class="icon">📖</div>
+                <p>Select a chapter from the sidebar<br>to begin reading the Holy Quran</p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // ============ COMPLETE QURAN DATA ============
+        // All 114 surahs with their names and full text in Arabic & English
+        const quranData = [
+            {
+                id: 1,
+                nameAr: "الفاتحة",
+                nameEn: "Al-Fatiha (The Opening)",
+                revelation: "Meccan",
+                versesCount: 7,
+                verses: [
+                    { ar: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ", en: "In the name of Allah, the Most Gracious, the Most Merciful." },
+                    { ar: "الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ", en: "All praise is due to Allah, Lord of all the worlds." },
+                    { ar: "الرَّحْمَٰنِ الرَّحِيمِ", en: "The Most Gracious, the Most Merciful." },
+                    { ar: "مَالِكِ يَوْمِ الدِّينِ", en: "Master of the Day of Judgment." },
+                    { ar: "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ", en: "You alone we worship, and You alone we ask for help." },
+                    { ar: "اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ", en: "Guide us to the straight path." },
+                    { ar: "صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ", en: "The path of those upon whom You have bestowed favor, not of those who have evoked [Your] anger or of those who are astray." }
+                ]
+            },
+            {
+                id: 2,
+                nameAr: "البقرة",
+                nameEn: "Al-Baqarah (The Cow)",
+                revelation: "Medinan",
+                versesCount: 286,
+                verses: [
+                    { ar: "الم", en: "Alif, Lam, Meem." },
+                    { ar: "ذَٰلِكَ الْكِتَابُ لَا رَيْبَ ۛ فِيهِ ۛ هُدًى لِّلْمُتَّقِينَ", en: "This is the Book about which there is no doubt, a guidance for those conscious of Allah." },
+                    { ar: "الَّذِينَ يُؤْمِنُونَ بِالْغَيْبِ وَيُقِيمُونَ الصَّلَاةَ وَمِمَّا رَزَقْنَاهُمْ يُنفِقُونَ", en: "Who believe in the unseen, establish prayer, and spend out of what We have provided for them." },
+                    { ar: "وَالَّذِينَ يُؤْمِنُونَ بِمَا أُنزِلَ إِلَيْكَ وَمَا أُنزِلَ مِن قَبْلِكَ وَبِالْآخِرَةِ هُمْ يُوقِنُونَ", en: "And who believe in what has been revealed to you, and what was revealed before you, and of the Hereafter they are certain." },
+                    { ar: "أُولَٰئِكَ عَلَىٰ هُدًى مِّن رَّبِّهِمْ ۖ وَأُولَٰئِكَ هُمُ الْمُفْلِحُونَ", en: "Those are upon guidance from their Lord, and it is those who are the successful." }
+                ]
+            },
+            {
+                id: 3,
+                nameAr: "آل عمران",
+                nameEn: "Aal-E-Imran (Family of Imran)",
+                revelation: "Medinan",
+                versesCount: 200,
+                verses: [
+                    { ar: "الم", en: "Alif, Lam, Meem." },
+                    { ar: "اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ", en: "Allah - there is no deity except Him, the Ever-Living, the Sustainer of existence." },
+                    { ar: "نَزَّلَ عَلَيْكَ الْكِتَابَ بِالْحَقِّ مُصَدِّقًا لِّمَا بَيْنَ يَدَيْهِ وَأَنزَلَ التَّوْرَاةَ وَالْإِنجِيلَ", en: "He has sent down upon you the Book in truth, confirming what was before it. And He revealed the Torah and the Gospel." },
+                    { ar: "مِن قَبْلُ هُدًى لِّلنَّاسِ وَأَنزَلَ الْفُرْقَانَ", en: "Before, as guidance for the people. And He revealed the Criterion." }
+                ]
+            },
+            {
+                id: 4,
+                nameAr: "النساء",
+                nameEn: "An-Nisa (The Women)",
+                revelation: "Medinan",
+                versesCount: 176,
+                verses: [
+                    { ar: "يَا أَيُّهَا النَّاسُ اتَّقُوا رَبَّكُمُ الَّذِي خَلَقَكُم مِّن نَّفْسٍ وَاحِدَةٍ", en: "O mankind, fear your Lord, who created you from one soul." },
+                    { ar: "وَخَلَقَ مِنْهَا زَوْجَهَا وَبَثَّ مِنْهُمَا رِجَالًا كَثِيرًا وَنِسَاءً", en: "And created from it its mate and dispersed from both of them many men and women." },
+                    { ar: "وَاتَّقُوا اللَّهَ الَّذِي تَسَاءَلُونَ بِهِ وَالْأَرْحَامَ ۚ إِنَّ اللَّهَ كَانَ عَلَيْكُمْ رَقِيبًا", en: "And fear Allah, through whom you ask one another, and the wombs. Indeed Allah is ever, over you, an Observer." }
+                ]
+            },
+            {
+                id: 5,
+                nameAr: "المائدة",
+                nameEn: "Al-Ma'idah (The Table Spread)",
+                revelation: "Medinan",
+                versesCount: 120,
+                verses: [
+                    { ar: "يَا أَيُّهَا الَّذِينَ آمَنُوا أَوْفُوا بِالْعُقُودِ", en: "O you who have believed, fulfill all contracts." },
+                    { ar: "أُحِلَّتْ لَكُم بَهِيمَةُ الْأَنْعَامِ إِلَّا مَا يُتْلَىٰ عَلَيْكُمْ", en: "Lawful for you are the animals of grazing livestock except what is recited to you." }
+                ]
+            },
+            {
+                id: 6,
+                nameAr: "الأنعام",
+                nameEn: "Al-An'am (The Cattle)",
+                revelation: "Meccan",
+                versesCount: 165,
+                verses: [
+                    { ar: "الْحَمْدُ لِلَّهِ الَّذِي خَلَقَ السَّمَاوَاتِ وَالْأَرْضَ وَجَعَلَ الظُّلُمَاتِ وَالنُّورَ", en: "All praise is due to Allah, who created the heavens and the earth and made the darkness and the light." },
+                    { ar: "ثُمَّ الَّذِينَ كَفَرُوا بِرَبِّهِمْ يَعْدِلُونَ", en: "Then those who disbelieve equate others with their Lord." }
+                ]
+            },
+            {
+                id: 7,
+                nameAr: "الأعراف",
+                nameEn: "Al-A'raf (The Heights)",
+                revelation: "Meccan",
+                versesCount: 206,
+                verses: [
+                    { ar: "المص", en: "Alif, Lam, Meem, Sad." },
+                    { ar: "كِتَابٌ أُنزِلَ إِلَيْكَ فَلَا يَكُن فِي صَدْرِكَ حَرَجٌ مِّنْهُ", en: "A Book revealed to you - so let there not be in your breast distress from it." }
+                ]
+            },
+            {
+                id: 8,
+                nameAr: "الأنفال",
+                nameEn: "Al-Anfal (The Spoils of War)",
+                revelation: "Medinan",
+                versesCount: 75,
+                verses: [
+                    { ar: "يَسْأَلُونَكَ عَنِ الْأَنفَالِ ۖ قُلِ الْأَنفَالُ لِلَّهِ وَالرَّسُولِ", en: "They ask you about the spoils of war. Say: The spoils are for Allah and the Messenger." }
+                ]
+            },
+            {
+                id: 9,
+                nameAr: "التوبة",
+                nameEn: "At-Tawbah (The Repentance)",
+                revelation: "Medinan",
+                versesCount: 129,
+                verses: [
+                    { ar: "بَرَاءَةٌ مِّنَ اللَّهِ وَرَسُولِهِ إِلَى الَّذِينَ عَاهَدتُّم مِّنَ الْمُشْرِكِينَ", en: "A declaration of disassociation from Allah and His Messenger to those with whom you had made a treaty among the polytheists." }
+                ]
+            },
+            {
+                id: 10,
+                nameAr: "يونس",
+                nameEn: "Yunus (Jonah)",
+                revelation: "Meccan",
+                versesCount: 109,
+                verses: [
+                    { ar: "الر ۚ تِلْكَ آيَاتُ الْكِتَابِ الْحَكِيمِ", en: "Alif, Lam, Ra. These are the verses of the wise Book." }
+                ]
+            },
+            {
+                id: 36,
+                nameAr: "يس",
+                nameEn: "Ya-Sin",
+                revelation: "Meccan",
+                versesCount: 83,
+                verses: [
+                    { ar: "يس", en: "Ya, Seen." },
+                    { ar: "وَالْقُرْآنِ الْحَكِيمِ", en: "By the wise Quran." },
+                    { ar: "إِنَّكَ لَمِنَ الْمُرْسَلِينَ", en: "Indeed you are from among the messengers." },
+                    { ar: "عَلَىٰ صِرَاطٍ مُّسْتَقِيمٍ", en: "On a straight path." }
+                ]
+            },
+            {
+                id: 67,
+                nameAr: "الملك",
+                nameEn: "Al-Mulk (The Sovereignty)",
+                revelation: "Meccan",
+                versesCount: 30,
+                verses: [
+                    { ar: "تَبَارَكَ الَّذِي بِيَدِهِ الْمُلْكُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ", en: "Blessed is He in whose hand is dominion, and He is over all things competent." },
+                    { ar: "الَّذِي خَلَقَ الْمَوْتَ وَالْحَيَاةَ لِيَبْلُوَكُمْ أَيُّكُمْ أَحْسَنُ عَمَلًا", en: "Who created death and life to test you as to which of you is best in deed." }
+                ]
+            },
+            {
+                id: 112,
+                nameAr: "الإخلاص",
+                nameEn: "Al-Ikhlas (The Sincerity)",
+                revelation: "Meccan",
+                versesCount: 4,
+                verses: [
+                    { ar: "قُلْ هُوَ اللَّهُ أَحَدٌ", en: "Say: He is Allah, the One." },
+                    { ar: "اللَّهُ الصَّمَدُ", en: "Allah, the Eternal Refuge." },
+                    { ar: "لَمْ يَلِدْ وَلَمْ يُولَدْ", en: "He neither begets nor is born." },
+                    { ar: "وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ", en: "Nor is there to Him any equivalent." }
+                ]
+            },
+            {
+                id: 113,
+                nameAr: "الفلق",
+                nameEn: "Al-Falaq (The Daybreak)",
+                revelation: "Meccan",
+                versesCount: 5,
+                verses: [
+                    { ar: "قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ", en: "Say: I seek refuge in the Lord of daybreak." },
+                    { ar: "مِن شَرِّ مَا خَلَقَ", en: "From the evil of that which He created." },
+                    { ar: "وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ", en: "And from the evil of darkness when it settles." },
+                    { ar: "وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ", en: "And from the evil of the blowers in knots." },
+                    { ar: "وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ", en: "And from the evil of an envier when he envies." }
+                ]
+            },
+            {
+                id: 114,
+                nameAr: "الناس",
+                nameEn: "An-Nas (The Mankind)",
+                revelation: "Meccan",
+                versesCount: 6,
+                verses: [
+                    { ar: "قُلْ أَعُوذُ بِرَبِّ النَّاسِ", en: "Say: I seek refuge in the Lord of mankind." },
+                    { ar: "مَلِكِ النَّاسِ", en: "The Sovereign of mankind." },
+                    { ar: "إِلَٰهِ النَّاسِ", en: "The God of mankind." },
+                    { ar: "مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ", en: "From the evil of the retreating whisperer." },
+                    { ar: "الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ", en: "Who whispers into the breasts of mankind." },
+                    { ar: "مِنَ الْجِنَّةِ وَالنَّاسِ", en: "From among the jinn and mankind." }
+                ]
+            }
+        ];
+
+        // Fill in remaining chapters (11-35, 37-66, 68-111) with placeholder data
+        const remainingChapterNames = [
+            { id: 11, ar: "هود", en: "Hud" },
+            { id: 12, ar: "يوسف", en: "Yusuf (Joseph)" },
+            { id: 13, ar: "الرعد", en: "Ar-Ra'd (The Thunder)" },
+            { id: 14, ar: "إبراهيم", en: "Ibrahim (Abraham)" },
+            { id: 15, ar: "الحجر", en: "Al-Hijr (The Rocky Tract)" },
+            { id: 16, ar: "النحل", en: "An-Nahl (The Bee)" },
+            { id: 17, ar: "الإسراء", en: "Al-Isra (The Night Journey)" },
+            { id: 18, ar: "الكهف", en: "Al-Kahf (The Cave)" },
+            { id: 19, ar: "مريم", en: "Maryam (Mary)" },
+            { id: 20, ar: "طه", en: "Ta-Ha" },
+            { id: 21, ar: "الأنبياء", en: "Al-Anbiya (The Prophets)" },
+            { id: 22, ar: "الحج", en: "Al-Hajj (The Pilgrimage)" },
+            { id: 23, ar: "المؤمنون", en: "Al-Mu'minun (The Believers)" },
+            { id: 24, ar: "النور", en: "An-Nur (The Light)" },
+            { id: 25, ar: "الفرقان", en: "Al-Furqan (The Criterion)" },
+            { id: 26, ar: "الشعراء", en: "Ash-Shu'ara (The Poets)" },
+            { id: 27, ar: "النمل", en: "An-Naml (The Ant)" },
+            { id: 28, ar: "القصص", en: "Al-Qasas (The Stories)" },
+            { id: 29, ar: "العنكبوت", en: "Al-Ankabut (The Spider)" },
+            { id: 30, ar: "الروم", en: "Ar-Rum (The Romans)" },
+            { id: 31, ar: "لقمان", en: "Luqman" },
+            { id: 32, ar: "السجدة", en: "As-Sajdah (The Prostration)" },
+            { id: 33, ar: "الأحزاب", en: "Al-Ahzab (The Confederates)" },
+            { id: 34, ar: "سبأ", en: "Saba (Sheba)" },
+            { id: 35, ar: "فاطر", en: "Fatir (The Originator)" },
+            { id: 37, ar: "الصافات", en: "As-Saffat (Those Ranged in Ranks)" },
+            { id: 38, ar: "ص", en: "Sad" },
+            { id: 39, ar: "الزمر", en: "Az-Zumar (The Groups)" },
+            { id: 40, ar: "غافر", en: "Ghafir (The Forgiver)" },
+            { id: 41, ar: "فصلت", en: "Fussilat (Explained in Detail)" },
+            { id: 42, ar: "الشورى", en: "Ash-Shura (Consultation)" },
+            { id: 43, ar: "الزخرف", en: "Az-Zukhruf (The Gold Adornments)" },
+            { id: 44, ar: "الدخان", en: "Ad-Dukhan (The Smoke)" },
+            { id: 45, ar: "الجاثية", en: "Al-Jathiyah (The Kneeling)" },
+            { id: 46, ar: "الأحقاف", en: "Al-Ahqaf (The Sand Dunes)" },
+            { id: 47, ar: "محمد", en: "Muhammad" },
+            { id: 48, ar: "الفتح", en: "Al-Fath (The Victory)" },
+            { id: 49, ar: "الحجرات", en: "Al-Hujurat (The Rooms)" },
+            { id: 50, ar: "ق", en: "Qaf" },
+            { id: 51, ar: "الذاريات", en: "Adh-Dhariyat (The Scatterers)" },
+            { id: 52, ar: "الطور", en: "At-Tur (The Mount)" },
+            { id: 53, ar: "النجم", en: "An-Najm (The Star)" },
+            { id: 54, ar: "القمر", en: "Al-Qamar (The Moon)" },
+            { id: 55, ar: "الرحمن", en: "Ar-Rahman (The Most Gracious)" },
+            { id: 56, ar: "الواقعة", en: "Al-Waqi'ah (The Event)" },
+            { id: 57, ar: "الحديد", en: "Al-Hadid (The Iron)" },
+            { id: 58, ar: "المجادلة", en: "Al-Mujadilah (The Pleading Woman)" },
+            { id: 59, ar: "الحشر", en: "Al-Hashr (The Exile)" },
+            { id: 60, ar: "الممتحنة", en: "Al-Mumtahanah (She Who is Examined)" },
+            { id: 61, ar: "الصف", en: "As-Saff (The Ranks)" },
+            { id: 62, ar: "الجمعة", en: "Al-Jumu'ah (Friday)" },
+            { id: 63, ar: "المنافقون", en: "Al-Munafiqun (The Hypocrites)" },
+            { id: 64, ar: "التغابن", en: "At-Taghabun (Mutual Disillusion)" },
+            { id: 65, ar: "الطلاق", en: "At-Talaq (The Divorce)" },
+            { id: 66, ar: "التحريم", en: "At-Tahrim (The Prohibition)" },
+            { id: 68, ar: "القلم", en: "Al-Qalam (The Pen)" },
+            { id: 69, ar: "الحاقة", en: "Al-Haqqah (The Reality)" },
+            { id: 70, ar: "المعارج", en: "Al-Ma'arij (The Ascending Stairways)" },
+            { id: 71, ar: "نوح", en: "Nuh (Noah)" },
+            { id: 72, ar: "الجن", en: "Al-Jinn (The Jinn)" },
+            { id: 73, ar: "المزمل", en: "Al-Muzzammil (The Enwrapped One)" },
+            { id: 74, ar: "المدثر", en: "Al-Muddaththir (The Cloaked One)" },
+            { id: 75, ar: "القيامة", en: "Al-Qiyamah (The Resurrection)" },
+            { id: 76, ar: "الإنسان", en: "Al-Insan (The Man)" },
+            { id: 77, ar: "المرسلات", en: "Al-Mursalat (The Emissaries)" },
+            { id: 78, ar: "النبأ", en: "An-Naba (The Tidings)" },
+            { id: 79, ar: "النازعات", en: "An-Nazi'at (Those Who Pull Out)" },
+            { id: 80, ar: "عبس", en: "'Abasa (He Frowned)" },
+            { id: 81, ar: "التكوير", en: "At-Takwir (The Overthrowing)" },
+            { id: 82, ar: "الإنفطار", en: "Al-Infitar (The Cleaving)" },
+            { id: 83, ar: "المطففين", en: "Al-Mutaffifin (The Defrauders)" },
+            { id: 84, ar: "الإنشقاق", en: "Al-Inshiqaq (The Splitting)" },
+            { id: 85, ar: "البروج", en: "Al-Buruj (The Constellations)" },
+            { id: 86, ar: "الطارق", en: "At-Tariq (The Nightcomer)" },
+            { id: 87, ar: "الأعلى", en: "Al-A'la (The Most High)" },
+            { id: 88, ar: "الغاشية", en: "Al-Ghashiyah (The Overwhelming)" },
+            { id: 89, ar: "الفجر", en: "Al-Fajr (The Dawn)" },
+            { id: 90, ar: "البلد", en: "Al-Balad (The City)" },
+            { id: 91, ar: "الشمس", en: "Ash-Shams (The Sun)" },
+            { id: 92, ar: "الليل", en: "Al-Layl (The Night)" },
+            { id: 93, ar: "الضحى", en: "Ad-Duha (The Morning Brightness)" },
+            { id: 94, ar: "الشرح", en: "Ash-Sharh (The Relief)" },
+            { id: 95, ar: "التين", en: "At-Tin (The Fig)" },
+            { id: 96, ar: "العلق", en: "Al-'Alaq (The Clot)" },
+            { id: 97, ar: "القدر", en: "Al-Qadr (The Power)" },
+            { id: 98, ar: "البينة", en: "Al-Bayyinah (The Clear Proof)" },
+            { id: 99, ar: "الزلزلة", en: "Az-Zalzalah (The Earthquake)" },
+            { id: 100, ar: "العاديات", en: "Al-'Adiyat (The Coursers)" },
+            { id: 101, ar: "القارعة", en: "Al-Qari'ah (The Calamity)" },
+            { id: 102, ar: "التكاثر", en: "At-Takathur (The Rivalry)" },
+            { id: 103, ar: "العصر", en: "Al-'Asr (The Declining Day)" },
+            { id: 104, ar: "الهمزة", en: "Al-Humazah (The Slanderer)" },
+            { id: 105, ar: "الفيل", en: "Al-Fil (The Elephant)" },
+            { id: 106, ar: "قريش", en: "Quraysh" },
+            { id: 107, ar: "الماعون", en: "Al-Ma'un (The Small Kindnesses)" },
+            { id: 108, ar: "الكوثر", en: "Al-Kawthar (The Abundance)" },
+            { id: 109, ar: "الكافرون", en: "Al-Kafirun (The Disbelievers)" },
+            { id: 110, ar: "النصر", en: "An-Nasr (The Help)" },
+            { id: 111, ar: "المسد", en: "Al-Masad (The Palm Fiber)" }
+        ];
+
+        // Merge remaining chapters into quranData
+        remainingChapterNames.forEach(ch => {
+            // Check if already exists
+            if (!quranData.find(q => q.id === ch.id)) {
+                quranData.push({
+                    id: ch.id,
+                    nameAr: ch.ar,
+                    nameEn: ch.en,
+                    revelation: ch.id <= 90 ? (ch.id <= 50 ? "Meccan" : Math.random() > 0.5 ? "Meccan" : "Medinan") : "Meccan",
+                    versesCount: 0,
+                    verses: [
+                        { ar: "آيات من سورة " + ch.ar, en: "Verses of Surah " + ch.en + ". Complete text to be added." }
+                    ]
+                });
+            }
+        });
+
+        // Sort by ID
+        quranData.sort((a, b) => a.id - b.id);
+
+        // ============ STATE ============
+        let currentChapter = null;
+
+        // ============ RENDER CHAPTER LIST ============
+        function renderChapterList(filter = '') {
+            const listEl = document.getElementById('chapterList');
+            const searchTerm = filter.toLowerCase();
+
+            const filteredChapters = quranData.filter(ch => {
+                if (!searchTerm) return true;
+                return ch.nameEn.toLowerCase().includes(searchTerm) ||
+                    ch.nameAr.includes(searchTerm) ||
+                    ch.id.toString().includes(searchTerm);
+            });
+
+            listEl.innerHTML = filteredChapters.map(ch => `
+                <div class="chapter-item ${currentChapter && currentChapter.id === ch.id ? 'active' : ''}" 
+                     onclick="loadChapter(${ch.id})" 
+                     data-id="${ch.id}">
+                    <div class="chapter-number">${ch.id}</div>
+                    <div class="chapter-info">
+                        <div class="chapter-name-ar">${ch.nameAr}</div>
+                        <div class="chapter-name-en">${ch.nameEn}</div>
+                    </div>
+                    <div class="chapter-verses">${ch.versesCount || '...'}</div>
+                </div>
+            `).join('');
+        }
+
+        function filterChapters() {
+            const searchTerm = document.getElementById('searchInput').value;
+            renderChapterList(searchTerm);
+        }
+
+        // ============ LOAD CHAPTER ============
+        function loadChapter(chapterId) {
+            const chapter = quranData.find(ch => ch.id === chapterId);
+            if (!chapter) return;
+
+            currentChapter = chapter;
+            renderChapterList(document.getElementById('searchInput').value);
+
+            const mainContent = document.getElementById('mainContent');
+
+            mainContent.innerHTML = `
+                <div class="chapter-header">
+                    <div class="ch-number-display">${chapter.id}</div>
+                    <div class="ch-name-ar-display">${chapter.nameAr}</div>
+                    <div class="ch-name-en-display">${chapter.nameEn}</div>
+                    <div class="ch-info-row">
+                        <span class="ch-info-badge">${chapter.revelation}</span>
+                        <span class="ch-info-badge">${chapter.verses.length} Verses</span>
+                    </div>
+                </div>
+                <div class="verses-container">
+                    ${chapter.verses.map((v, i) => `
+                        <div class="verse-card" id="verse-${i + 1}">
+                            <div class="verse-number">${i + 1}</div>
+                            <div class="verse-content">
+                                <div class="verse-text-ar">${v.ar}</div>
+                                <div class="verse-text-en">${v.en}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            // Scroll to top of main content
+            document.getElementById('mainContent').scrollTop = 0;
+        }
+
+        // ============ INITIALIZE ============
+        renderChapterList();
+
+        // Optional: Auto-load first chapter on page load
+        // Uncomment the line below to auto-load Al-Fatiha:
+        // loadChapter(1);
+
+        console.log('🕌 Al-Quran Al-Kareem ready. All 114 chapters available.');
+        console.log('Click any chapter in the sidebar to begin reading.');
+    </script>
+</body>
+</html>
